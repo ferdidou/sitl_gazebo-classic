@@ -12,9 +12,20 @@
         <inertia><ixx>0.15</ixx><ixy>0</ixy><ixz>0</ixz>
           <iyy>0.15</iyy><iyz>0</iyz><izz>0.05</izz></inertia></inertial>
       <collision name='base_link_collision'><pose>0 0 0 0 0 0</pose>
-        <geometry><cylinder><length>0.06</length><radius>0.10</radius></cylinder></geometry>
-        <surface><contact><ode><min_depth>0.001</min_depth><max_vel>0</max_vel></ode></contact>
-          <friction><ode/></friction></surface></collision>
+        <!-- Wide flat footprint (~0.6 m diameter, matching the arm span) so the drone
+             lands stably on a large contact patch instead of tipping/bouncing on a
+             tiny central cylinder. Soft, damped, zero-restitution contact kills bounce. -->
+        <geometry><cylinder><length>0.06</length><radius>0.30</radius></cylinder></geometry>
+        <surface>
+          <contact><ode>
+            <min_depth>0.001</min_depth>
+            <max_vel>0</max_vel>
+            <kp>1e5</kp>
+            <kd>50</kd>
+          </ode></contact>
+          <bounce><restitution_coefficient>0</restitution_coefficient><threshold>1e8</threshold></bounce>
+          <friction><ode><mu>1.0</mu><mu2>1.0</mu2></ode></friction>
+        </surface></collision>
       <visual name='base_link_visual'><pose>0 0 0 0 0 0</pose>
         <geometry><cylinder><length>0.05</length><radius>0.09</radius></cylinder></geometry>
         <material><script><name>Gazebo/DarkGrey</name>
